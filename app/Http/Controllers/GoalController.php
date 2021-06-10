@@ -46,7 +46,8 @@ class GoalController extends Controller
      */
     public function show(Goal $goal)
     {
-        //
+
+        return view('employee.edit_goals',['goal' => $goal]);
     }
 
     /**
@@ -80,6 +81,7 @@ class GoalController extends Controller
      */
     public function destroy(Goal $goal)
     {
-        //
+        $goal->delete();
+        return redirect()->route('employee.index',['success' => 'The Goal has been Deleted Successfully!']);
     }
 }

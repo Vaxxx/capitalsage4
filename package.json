@@ -27,6 +27,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-upload": "^28.0.0",
         "ckeditor": "^4.12.1",
         "ckeditor4": "github:ckeditor/ckeditor4-releases#full/latest"
     }

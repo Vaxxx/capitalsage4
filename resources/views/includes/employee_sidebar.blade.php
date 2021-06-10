@@ -16,8 +16,7 @@
                 </a>
                 <ul class="sub">
                     <li><a class="" href="{{route('employee.password')}}">Change Password</a></li>
-                    <li><a class="" href="">Add Goal</a></li>
-                    <li><a class="" href="">Add Appraisal</a></li>
+                    <li><a class="" href="{{route('employee.goals')}}">Add Goal</a></li>
                     <li><a class="" href="">Edit Profile</a></li>
                 </ul>
             </li>

@@ -60,7 +60,7 @@
 <section id="container" class="">
 
 
-    <header class="header dark-bg">
+    <header class="header dark-bg mt-n5">
         <div class="toggle-nav">
             <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
         </div>
@@ -90,6 +90,22 @@
             <!-- notification dropdown start-->
             <ul class="nav pull-right top-menu">
 
+                <li class="dropdown pt-5">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="profile-ava">
+                                <i class="fa fa-bell-o text-white"></i>
+                            </span>
+                        <span class="badge badge-danger">2</span>
+
+                    </a>
+                    <ul class="dropdown-menu extended logout">
+
+                        <li class="eborder-top">
+                            <a href="#"><i class="icon_profile"></i> My Profile</a>
+                        </li>
+
+                    </ul>
+                </li>
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <span class="profile-ava">

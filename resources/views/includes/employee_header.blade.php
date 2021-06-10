@@ -5,7 +5,7 @@
 
             <div class="title">Number of Appraisal</div>
             <div class="count">
-                <div class="text-center bg-secondary text-white msg ">@include('includes.messages')</div>
+               {{$appraisalsCount}}
             </div>
         </div>
         <!--/.info-box-->
@@ -25,8 +25,18 @@
         </a>
         <!--/.info-box-->
     </div>
-    <!--/.col-->
 
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <a href="{{route('employee.goals')}}">
+            <div class="info-box green-bg">
+                <i class="fa fa-bullseye"></i>
+                <div class="count">Goals</div>
+            </div>
+        </a>
+        <!--/.info-box-->
+    </div>
+    <!--/.col-->
+    <div class="text-center bg-secondary text-white msg ">@include('includes.messages')</div>
 
 
 </div>

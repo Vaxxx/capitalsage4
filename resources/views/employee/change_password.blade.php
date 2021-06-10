@@ -3,12 +3,16 @@
     @include('includes.employee_sidebar')
 @endsection
 @section('content')
-    <div class="container mt-5">
+    @include('includes.employee_header')
+    <div class="container">
         <div class="row">
-
-            <div class="col-md-7">
-                <h3 style="color:#727272;">CHANGE PASSWORD</h3>
-                <form action="{{route('employee.passwordStore')}}" method="post">
+            <div class="col-md-8 offset-1">
+                <div class="card" style="border-radius: 20px">
+                    <div class="card-header">
+                        <h3>Change Password</h3>
+                    </div>
+                    <div class="card-body">
+                         <form action="{{route('employee.passwordStore')}}" method="post">
                     @csrf
 
                     <div class="form-group">
@@ -36,9 +40,9 @@
                         <button type="submit" class="btn btn-success float-right">Change Password</button>
                     </div>
                 </form>
-
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
 @endsection

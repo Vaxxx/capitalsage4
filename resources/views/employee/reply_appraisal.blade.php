@@ -4,19 +4,16 @@
 @endsection
 @section('content')
     @include('includes.employee_header')
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2><i class="fa fa-map-marker red"></i><strong>Respond to Appraisals</strong></h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-1">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Respond to Appraisal</h4>
 
-                    <div class="panel-actions">
 
-                        {{--                        <a href="index.html#" class="btn-minimize"><i class="fa fa-plus-circle"></i></a>--}}
-                        {{--                        <a href="index.html#" class="btn-close"><i class="fa fa-times"></i></a>--}}
-                    </div>
                 </div>
-                <div class="panel-body-map">
+                <div class="card-body">
                      <div class="row">
                          <div class="col-md-8 offset-1">
                              <form action="{{route('appraisal.update', $appraisal->id)}}" method="post" >
@@ -29,7 +26,7 @@
                                      <label for="name" class= "col-form-label text-md-right">{{ __('Appraisal') }}</label>
                                  </div>
                                  <div class="form-group">
-                                         <textarea class="form-control @error('subject') is-invalid @enderror"  name="subject">
+                                         <textarea id="editor" class="form-control @error('subject') is-invalid @enderror"  name="subject">
                                              {{$appraisal->subject}}
                                          </textarea>
                                  </div>
@@ -38,7 +35,7 @@
 
                                  </div>
                                  <div class="form-group">
-                                         <textarea class="form-control @error('name') is-invalid @enderror" name="reply" required>
+                                         <textarea id="editor" class="form-control @error('name') is-invalid @enderror" name="reply" required>
                                              {{$appraisal->reply}}
                                          </textarea>
                                  </div>
@@ -52,6 +49,46 @@
             </div>
         </div>
     </div>
+    </div>
+@endsection
+@section('scripts')
 
-    <h2> I am an employee!</h2>
+    <script>
+        $('div.msg').delay(5000).slideUp(300);
+    </script>
+
+    <script src="{{asset('ckeditor/ckeditor.js')}}"></script>
+    <script>
+        /**
+         * using ckeditor as a wysiwyg editor and also to upload images and files
+         * step 1. add the link above (cdn link)
+         * step 2. copy ckeditor into your public dir
+         * step3. ensure your textarea has an id of editor
+         * step3. add the codes below=> CKEditor.replace...
+         * step4. create a post route in web.php admin.upload=>Route::post('admin_upload_files', [AdminController::class, 'upload'])->name('admin.upload');
+         * step5. add an upload function in your controller
+         * if($request->hasFile('upload')){
+                                      $originName = $request-file('upload')->getClientOrigninalName();
+                                      $fileName = pathinfo($originName, PATHINFO_FILENAME);
+                                      $extension = $request->file('upload')->getClientOrigninalExtension();
+                                      $fileName = $fileName.'_'.time().'.'.$extension;
+
+                                      $request->file('upload')->move(public_path('img').$fileName);
+
+                                      $CKEDITORFuncNum = $request->input('CKEDITORFuncNum');
+                                      $url = asset('public/img/'.$fileName);
+                                      $msg = 'upload was successful'
+                                      {{--//$response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEDITORFuncNum, '$url', '$msg')//</script>"--}}
+        @header('Content-type: text/html; charset-utf-8');
+                                    echo $response;
+                                    }
+         * step5. send files to database
+         */
+        CKEDITOR.replace( 'editor',{
+            extraPlugins :  ['filebrowser','popup'],
+            filebrowserUploadUrl: "{{route('admin.upload',['_token' => csrf_token()])}}",
+            filebrowserBrowseUrl: "{{route('admin.upload',['_token' => csrf_token()])}}",
+            filebrowserUploadMethod: 'form'
+        } );
+    </script>
 @endsection

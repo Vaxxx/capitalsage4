@@ -9,14 +9,14 @@
                 </a>
             </li>
             <li class="sub-menu">
-                <a href="" class="">
+                <a href="{{route('admin.create')}}" class="">
                     <i class="icon_document_alt"></i>
                     <span>Employee</span>
                     <span class="menu-arrow arrow_carrot-right"></span>
                 </a>
             </li>
             <li class="sub-menu">
-                <a href="javascript:;" class="">
+                <a href="{{route('admin.kpi')}}" class="">
                     <i class="fa fa-thumbs-o-up"></i>
                     <span>KPI</span>
                     <span class="menu-arrow arrow_carrot-right"></span>

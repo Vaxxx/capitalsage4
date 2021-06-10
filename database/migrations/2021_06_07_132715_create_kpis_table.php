@@ -15,10 +15,14 @@ class CreateKpisTable extends Migration
     {
         Schema::create('kpis', function (Blueprint $table) {
             $table->id();
-            $table->string('measure');
-            $table->string('target');
+            $table->string('recipient');
+            $table->string('objective');
+            $table->double('target');
+            $table->double('current');
             $table->string('comment');
             $table->string('date');
+            $table->double('score');
+            $table->string('grade')->nullable();
             $table->timestamps();
         });
     }

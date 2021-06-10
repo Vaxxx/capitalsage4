@@ -4,16 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Appraisal;
+use App\Models\Kpi;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('mustBeAdmin');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +33,8 @@ class AdminController extends Controller
             ->get();
         $noOfUsers = $users->count();
         $appraisals = Appraisal::all();
-        return view('admin.index',['users' => $users, 'noOfUsers' => $noOfUsers,  'appraisals' => $appraisals]);
+        $kpis = Kpi::paginate(10);
+        return view('admin.index',['users' => $users, 'noOfUsers' => $noOfUsers,  'appraisals' => $appraisals, 'kpis' => $kpis]);
     }
 
     /**
@@ -36,7 +44,13 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::where('role', 'employee')
+            ->where('name', Auth::user()->name)
+            ->get();
+        $noOfUsers = $users->count();
+        $appraisals = Appraisal::all();
+        $kpis = Kpi::paginate(10);
+        return view('admin.add_employee',['users' => $users, 'noOfUsers' => $noOfUsers,  'appraisals' => $appraisals, 'kpis' => $kpis]);
     }
 
     /**
@@ -159,6 +173,31 @@ class AdminController extends Controller
 
         return view('admin.appraisal',['users' => $users, 'noOfUsers' => $noOfUsers]);
     }
+
+    /**
+     * Show the form for creating a uploading files.
+     *
+     * @param Request $request
+     */
+    public function upload(Request $request){
+        if($request->hasFile('upload')){
+            $originName = $request->file('upload')->getclientOriginalName();
+            $fileName = pathinfo($originName, PATHINFO_FILENAME);
+            $extension = $request->file('upload')->getclientOriginalExtension();
+            $fileName = $fileName.'_'.time().'.'.$extension;
+
+            $request->file('upload')->move(public_path('storage/admin_image_file'),$fileName);
+
+            $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+            $url = asset('storage/admin_image_file/'.$fileName);
+            $msg = 'File Upload successful!';
+            $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+            @header('Content-type: text/html; charset-utf-8');
+            echo $response;
+        }
+
+    }//end upload()
+
     /**
      * Store a newly created appraisal in storage.
      *
@@ -202,5 +241,115 @@ class AdminController extends Controller
         });
         //redirect to admin dashboard
         return redirect()->route('admin.index')->with('success', "A New Appraisal has been generated!");
+    }
+
+    public function kpi(){
+        $users = User::where('role', 'employee')
+            ->where('name', Auth::user()->name)
+            ->get();
+        $noOfUsers = $users->count();
+        //show the kpi form
+        return view('admin.kpi', ['users' => $users, 'noOfUsers' => $noOfUsers]);
+    }
+
+    public function kpiStore(Request $request){
+       // dd($request->all());
+        //validate
+        $request->validate([
+          'recipient' => 'required',
+          'objective' =>  'required|min:3',
+          'target'    =>  'required',
+          'current' => 'required',
+          'comment' => 'required',
+          'date'  =>  'required',
+          'grade' => 'required',
+        ]);
+        //save to db
+         $kpi = new Kpi();
+         $kpi->recipient = $request->recipient;
+         $kpi->objective = $request->objective;
+         $kpi->target = $request->target;
+         $kpi->current = $request->current;
+         $kpi->comment = $request->comment;
+         $kpi->date = $request->date;
+         $kpi->score = 0;
+         $kpi->grade = $request->grade;
+         $kpi->save();
+        //send a copy to employee mail
+
+        //add email to session...so that it can be used as the to email
+        Session::put('toEmail', $request->recipient);
+        $data = [
+            'heading' => 'KPI From Manager',
+            'msgBody' => 'Objective of the KPI: '.   $kpi->objective . ' ||'.
+                'Target : '.  $kpi->target.'     and ||        '.
+                'Current Position : '.  $kpi->current.'     and ||        '.
+                'Date : '.  $kpi->date.'     and ||        '.
+                'Grade from Manager: '.  $kpi->grade
+        ];
+
+        //send mail to user
+        Mail::send('emails.kpi', $data, function($mail){
+            $mail->from('vakporize@gmail.com');
+            $mail->to(Session::get('toEmail'));
+            $mail->subject('KPI');
+        });
+        //redirect
+        return redirect()->route('admin.index')->with('success', " A KPI has been added successfully!");
+    }
+
+    public function grade($kpi){
+        $users = User::where('role', 'employee')
+            ->where('name', Auth::user()->name)
+            ->get();
+        $noOfUsers = $users->count();
+        $appraisals = Appraisal::all();
+        $kpi = Kpi::find($kpi);
+        return view('admin.grade',['kpi' => $kpi, 'noOfUsers' => $noOfUsers, 'appraisals' => $appraisals]);
+    }
+
+    public function gradeStore(Request $request){
+       // dd($request->all());
+        //validate
+         $request->validate([
+             'grade' => 'required'
+         ]);
+
+        //update grade
+        DB::table('kpis')
+            ->where('id', $request->id)
+            ->update(
+                [
+                    'grade' => $request->grade
+
+                ]);
+        //send mail to employee
+        //add email to session...so that it can be used as the to email
+                Session::put('toEmail', $request->recipient);
+                $data = [
+                    'heading' => 'KPI Update From Manager',
+                    'msgBody' => 'New Grade caption is now <b>: '.   $request->grade . '</b> ||'
+                ];
+
+        //send mail to user
+        Mail::send('emails.kpi', $data, function($mail){
+            $mail->from('vakporize@gmail.com');
+            $mail->to(Session::get('toEmail'));
+            $mail->subject('KPI');
+        });
+
+        //redirect
+        return redirect()->route('admin.index')->with('success', "KPI Grade has been updated successfully!");
+    }
+
+    public function viewAppraisals(){
+        $appraisals = Appraisal::all();
+        return view('admin.view_appraisals',['appraisals' => $appraisals]);
+    }
+
+    public function report(){
+        $appraisals = Appraisal::all();
+        $pdf = PDF::loadView('admin.view_appraisals',['appraisals' => $appraisals])->setOptions(['defaultFont' => 'sans-serif']);
+        return $pdf->download('appraisals.pdf');
     }
 }

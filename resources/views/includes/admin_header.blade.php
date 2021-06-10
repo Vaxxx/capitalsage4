@@ -5,7 +5,7 @@
 
             <div class="title">Number of Staff</div>
             <div class="count">{{$noOfUsers}}
-                <div class="text-center bg-secondary text-white msg ">@include('includes.messages')</div>
+
             </div>
         </div>
         <!--/.info-box-->
@@ -13,7 +13,7 @@
     <!--/.col-->
 
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-        <a href="">
+        <a href="{{route('admin.create')}}">
             <div class="info-box brown-bg">
                 <i class="fa fa-plus"></i>
                 <div class="count">Add Employee</div>
@@ -25,11 +25,13 @@
     <!--/.col-->
 
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-        <a href="">
+        <a href="{{route('admin.kpi')}}">
             <div class="info-box dark-bg">
                 <i class="fa fa-thumbs-o-up"></i>
                 <div class="title">Key Performance Indicator</div>
-                <div class="count">KPI</div>
+                <div class="count">KPI
+
+                </div>
 
             </div>
         </a>
@@ -47,5 +49,5 @@
         <!--/.info-box-->
     </div>
     <!--/.col-->
-
+    <div class="text-center bg-secondary text-white msg">@include('includes.messages')</div>
 </div>

@@ -34,9 +34,7 @@
                                 <td>
                                     {{$user->email}}
                                 </td>
-                                <td>
-                                    {{$user->created_at}}
-                                </td>
+                                <td>{{Carbon\Carbon::parse($user->start_date)->format('l jS \\of F Y')}}</td>
                                 <td>
                                     <form action="{{ route('admin.destroy',$user->id) }}" method="POST">
                                         @csrf
@@ -61,7 +59,7 @@
                     <h2><i class="fa fa-map-marker red"></i><strong>Appraisals</strong></h2>
 
                     <div class="panel-actions">
-
+                             <a href="{{route('admin.report')}}" class="btn btn-info btn-xs text-white">Generate Report for Appraisals</a>
 {{--                        <a href="index.html#" class="btn-minimize"><i class="fa fa-plus-circle"></i></a>--}}
 {{--                        <a href="index.html#" class="btn-close"><i class="fa fa-times"></i></a>--}}
                     </div>
@@ -73,9 +71,9 @@
                         @foreach($appraisals as $appraisal)
                             <tr>
                                 <th>{{$appraisal->recipient}}</th>
-                                <th>{{$appraisal->date_requested}}</th>
-                                <th>{{$appraisal->deadline_date}}</th>
-                                <th>{{$appraisal->subject}}</th>
+                                <th>{{Carbon\Carbon::parse($appraisal->start_date)->format('l jS \\of F Y')}}</th>
+                                <th>{{Carbon\Carbon::parse($appraisal->start_date)->format('l jS \\of F Y')}}</th>
+                                <th>{!! $appraisal->subject!!}</th>
                                 <th>
                                     <form action="{{ route('appraisal.destroy',$appraisal->id) }}" method="POST">
                                         @csrf
@@ -107,8 +105,42 @@
                 </div>
                 <div class="panel-body-map">
                     <table class="table table-bordered table-responsive">
-                        <tr><th>Measure</th><th>Target </th> <th>Comment</th><th>Date</th><th>Score</th></tr>
+                        <tr><th>Recipient</th><th>Objective</th><th>Target </th> <th>Comment</th><th>Current Status</th><th>Date</th><th>Score(in %)</th><th>Grade</th><th>Actions</th></tr>
+                        @foreach($kpis as $kpi)
+                            <tr>
+                                <th>{{$kpi->recipient}}</th>
+                                <th>{{$kpi->objective}}</th>
+                                <th>{{$kpi->target}}</th>
+                                <th>{{$kpi->comment}}</th>
+                                <th>{{$kpi->current}}</th>
+                                <th>{{Carbon\Carbon::parse($kpi->date)->format('l jS \\of F Y')}}</th>
+                                <th>
+                                    <div class="progress bg-secondary">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" aria-valuenow="{{$kpi->score}}" aria-valuemin="0" aria-valuemax="100" style="width: {{$kpi->score}}%">
+                                            {{$kpi->score}}%
+                                        </div>
+                                    </div>
 
+                                     </th>
+                                <th>{{$kpi->grade}}</th>
+                                <th>
+                                    <form action="{{ route('kpi.destroy',$kpi->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Are you sure you want to Delete the KPI?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i>  &nbsp;Delete</button>
+                                    </form>
+{{--                                    <a href="{{route('admin.grade', $kpi->id)}}" class="btn btn-info btn-xs">Add Grade</a>--}}
+{{--                                    <form action="{{ route('kpi.update',$kpi->id) }}" method="POST">--}}
+{{--                                        @csrf--}}
+{{--                                        @method('PUT')--}}
+{{--                                        <button type="submit" class="btn btn-info"><i class="fa fa-edit"></i>  &nbsp;Add Grade</button>--}}
+{{--                                    </form>--}}
+                                </th>
+
+                            </tr>
+
+                        @endforeach
+                          {{$kpis->links()}};
                     </table>
 
                 </div>
