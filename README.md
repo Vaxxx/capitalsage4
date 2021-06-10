@@ -60,3 +60,41 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+INSTALLING THE PROJECT
+1. Clone the project to your local webserver
+2. create a database and import the database file(laravel_capitalsage.sql)
+3. adjust the .env file to follow your database configuration
+4. navigate to the project via your command prompt and type: php artisan serve
+5. View the project in your browser: http://localhost:8000
+
+
+You can log in as an admin with the following details
+email: admin@capitalsage.com
+password: 12345678
+You can log in as an Employee with the following details
+email: emp3@mail.com
+password: 5zyAcwWKvy9mfOxoODrf
+/******************/
+
+The following is achievable in the system right now
+
+1. You can add a business
+2. A business can add employees
+3. A business can delete employees
+4. Business can send appraisal to employee
+
+5. Employee can update password
+6. Created employee get automatic password sent to the used email
+7. employees can respond to appraisal
+8. Employees can view their appraisals
+9. Business can add KPI for Employees
+10. Employees can update KPI
+11. Score and grade is automatic depending on the current status in relation to the target
+12. Business can generate a report for the whole appraisals
+13. Employees can add goals and a mail is sent to the admin to see the goal
+14. Employees can attach supporting documents to appraisals
+15. Business can add comments for Employees KPI
+16. Business can delete appraisals
+
+Also note that a life demo is found @ http://appraisal.derossisuites.com.ng/
